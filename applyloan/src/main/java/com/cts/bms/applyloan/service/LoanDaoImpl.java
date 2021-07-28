@@ -53,6 +53,7 @@ public class LoanDaoImpl implements LoanDao {
 		try {
 		LOGGER.info("Displaying loans of accountId:"+accountId);
 		List<Loan> loanList=loanRepository.getAllLoansByAccountId(accountId);
+		System.out.println(loanList.size());
 		retrieveLoanProducer.send(RETRIEVE_LOAN_TOPIC, loanList);
 		return loanList;
 		}

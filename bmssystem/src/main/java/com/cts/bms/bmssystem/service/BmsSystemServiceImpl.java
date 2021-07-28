@@ -57,14 +57,15 @@ public class BmsSystemServiceImpl implements BmsSystemService {
 	}
 
 	@Override
-	public void retrieveLoans(Integer accountNumber) {
+	public void retrieveLoans(Integer accountId) {
 		logger.info("Loans");
-		loanClient.retrieveLoans(accountNumber);
+		loanClient.getAllLoans(accountId);
 		
 	}
 	@Override
 	public void applyLoan(String topic, Loan loan) {
 		logger.info("Apply Loan");
+		System.out.println(loan.getLoanType());
 		applyLoanProducer.send(topic, loan);
 		
 	}
@@ -76,6 +77,7 @@ public class BmsSystemServiceImpl implements BmsSystemService {
 		try {
 			ResponseEntity<String> response = loginClient.login(userLoginDetails);
 			session.setAttribute("TOKEN", "Bearer " + response.getBody());
+			System.out.println((String)session.getAttribute("TOKEN"));
 			System.out.println("Bearer " + response.getBody());
 			return true;
 

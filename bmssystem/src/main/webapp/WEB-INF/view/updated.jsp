@@ -14,7 +14,6 @@ response.setDateHeader("Expires", 0);
 <%-- 
 if (session.getAttribute("token") == null) {
 	response.sendRedirect(request.getContextPath() + "/portal/");
-
 } %>
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

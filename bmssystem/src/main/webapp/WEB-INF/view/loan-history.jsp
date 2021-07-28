@@ -30,14 +30,14 @@ if (session.getAttribute("token") == null) {
 		<p>No loans availed yet</p>
 	</c:if>
 	<c:if test="${not empty loanHistory}">
+	<p>Loan Details</p>
 		<c:forEach items="${loanHistory}" var="loan">
-			<li>${loan.loanId}</li>
-			<li>${loan.accountNumber}</li>
-			<li>${loan.type}</li>
-			<li>${loan.amount}</li>
-			<li>${loan.interestRate}</li>
-			<li>${loan.duration}</li>
-			<li>${loan.dateApplied}</li>
+			<li>LOAN ID: ${loan.loanId}</li>
+			<li>LOAN TYPE: ${loan.loanType}</li>
+			<li>LOAN AMOUNT: ${loan.loanAmount}</li>
+			<li>INTEREST RATE(%): ${loan.interestRate}</li>
+			<li>DURATION: ${loan.duration}</li>
+			<li>DATE: ${loan.loanDate}</li>
 			<br>
 		</c:forEach>
 	</c:if>

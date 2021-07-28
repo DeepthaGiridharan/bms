@@ -13,10 +13,11 @@ public class ApplyLoanConsumer {
 
 	private CountDownLatch latch = new CountDownLatch(1);
 
-	@KafkaListener(id = "${spring.kafka.applyLoanMessageConsumer.groupId}", topics = {
+	@KafkaListener(id = "${spring.kafka.applyLoanConsumer.groupId}", topics = {
 			"${spring.kafka.topic.applyLoanMessage}",
 			"${spring.kafka.topic.failedLoanMessage}" }, containerFactory = "applyLoanMessageKafkaListenerContainerFactory")
 	public void receive(String payload) {
+		System.out.println("portal applyloan consumer:"+payload);
 		bmsSystemService.saveMessage(payload);
 		latch.countDown();
 	}

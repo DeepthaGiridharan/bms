@@ -12,6 +12,7 @@ public class RetrieveLoanProducer {
 	private KafkaTemplate<String, List<Loan>> retrieveLoanProducerKafkaTemplate;
 
 	public void send(String topic, List<Loan> payload) {
+		System.out.println("applyloan producer for loan retrieve:"+ payload.size());
 		retrieveLoanProducerKafkaTemplate.send(topic, payload);
 	}
 

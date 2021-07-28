@@ -6,12 +6,16 @@ import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
+@Configuration
+@EnableKafka
 public class ApplyLoanConsumerConfig {
 
 	@Value("${spring.kafka.bootstrap-servers}")
@@ -31,16 +35,16 @@ public class ApplyLoanConsumerConfig {
 	}
 
 	@Bean
-	public ConsumerFactory<String, String[]> applyLoanMessageConsumerFactory() {
-		JsonDeserializer<String[]> deserializer = new JsonDeserializer<String[]>();
+	public ConsumerFactory<String, String> applyLoanMessageConsumerFactory() {
+		JsonDeserializer<String> deserializer = new JsonDeserializer<String>();
 		deserializer.addTrustedPackages("*");
 		return new DefaultKafkaConsumerFactory<>(applyLoanMessageConsumerConfigs(), new StringDeserializer(),
 				deserializer);
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, String[]> applyLoanMessageKafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, String[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, String> applyLoanMessageKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(applyLoanMessageConsumerFactory());
 
 		return factory;

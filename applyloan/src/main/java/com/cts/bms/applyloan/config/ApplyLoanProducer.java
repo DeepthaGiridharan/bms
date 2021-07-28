@@ -8,6 +8,7 @@ public class ApplyLoanProducer {
 	private KafkaTemplate<String, String> applyLoanProducerKafkaTemplate;
 
 	public void send(String topic, String payload) {
+		System.out.println("applyloan producer:"+topic+":"+payload);
 		applyLoanProducerKafkaTemplate.send(topic, payload);
 	}
 }

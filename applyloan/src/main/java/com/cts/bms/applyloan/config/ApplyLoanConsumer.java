@@ -16,6 +16,7 @@ public class ApplyLoanConsumer {
 
 	@KafkaListener(id = "${spring.kafka.applyLoanConsumer.groupId}", topics = "${spring.kafka.topic.applyLoan}", containerFactory = "applyLoanConsumerKafkaListenerContainerFactory")
 	public void receive(Loan payload) {
+		System.out.println("applyloan consumer ");
 		loanService.saveLoanDetails(payload);
 		latch.countDown();
 	}

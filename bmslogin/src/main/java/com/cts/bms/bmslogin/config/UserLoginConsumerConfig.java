@@ -41,7 +41,7 @@ public class UserLoginConsumerConfig {
 		DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
 
 		Map<String, Class<?>> classMap = new HashMap<>();
-		classMap.put("com.kafkaexample.bms.bmssystem.model.Customer", UserLoginDetails.class);
+		classMap.put("com.cts.bms.bmssystem.model.Customer", UserLoginDetails.class);
 		typeMapper.setIdClassMapping(classMap);
 
 		typeMapper.addTrustedPackages("*");

@@ -17,6 +17,7 @@ public class RetrieveLoanConsumer {
 	@KafkaListener(id = "${spring.kafka.retrieveLoanConsumer.groupId}", topics = { "${spring.kafka.topic.retrieveLoan}",
 	"${spring.kafka.topic.failedRetrieveLoan}" }, containerFactory = "retrieveLoanKafkaListenerContainerFactory")
 public void receive(List<Loan> payload) {
+		System.out.println("portal consumer for loan retrieve:"+ payload.size());
 		 bmsSystemService.saveLoans(payload);
 latch.countDown();
 }

@@ -40,7 +40,7 @@ public class ApplyLoanConsumerConfig {
 		DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
 
 		Map<String, Class<?>> classMap = new HashMap<>();
-		classMap.put("com.kafkaexample.bms.bmssystem.model.Loan", Loan.class);
+		classMap.put("com.cts.bms.bmssystem.model.Loan", Loan.class);
 		typeMapper.setIdClassMapping(classMap);
 
 		typeMapper.addTrustedPackages("*");

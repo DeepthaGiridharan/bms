@@ -26,6 +26,7 @@ if (session.getAttribute("token") == null) {
 </head>
 <body>
 	<h1>Home</h1>
+	<p>${token}</p>
 
 
 </body>

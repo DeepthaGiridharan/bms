@@ -50,6 +50,7 @@ public class BmsSystemController {
 	@PostMapping("/update_customer_details")
 	public String update(@RequestBody Customer customer, HttpSession session, ModelMap model) {
 		System.out.println((String) session.getAttribute("TOKEN"));
+		System.out.println(session.getAttributeNames());
 		if ((session == null) || (!bmsSystemService.validateToken((String) session.getAttribute("TOKEN"))))
 			return "redirect:/bmssystem/logout";
 		try {
@@ -66,18 +67,19 @@ public class BmsSystemController {
 			return "redirect:/bmssystem/logout";
 		try {
 			bmsSystemService.applyLoan(APPLY_LOAN_TOPIC, loan);
-			model.addAttribute("applyLoanMessage",bmsSystemService.getMessage());
+			String message=bmsSystemService.getMessage();
+			model.addAttribute("applyLoanMessage",message);
 			return "loan-applied";
 		} catch (Exception e) {
 			return "error";
 		}
 	}
 	@GetMapping("/get_account_loans")
-	public String retrieve(@RequestParam Integer accountNumber, HttpSession session, ModelMap model) {
+	public String retrieve(@RequestParam Integer accountId, HttpSession session, ModelMap model) {
 		if ((session == null) || (!bmsSystemService.validateToken((String) session.getAttribute("TOKEN"))))
 			return "redirect:/bmssystem/logout";
 
-		bmsSystemService.retrieveLoans(accountNumber);
+		bmsSystemService.retrieveLoans(accountId);
 		model.addAttribute("loanHistory", bmsSystemService.returnLoans());
 		return "loan-history";
 	}
@@ -90,7 +92,11 @@ public class BmsSystemController {
 	@PostMapping("/login")
 	public String login(@RequestBody UserLoginDetails userLoginDetails, HttpSession session, ModelMap warning) {
 		if (bmsSystemService.login(userLoginDetails, session, warning))
+		{
+			System.out.println("from portal controller in login "+(String)session.getAttribute("TOKEN"));
+			warning.addAttribute("token",(String)session.getAttribute("TOKEN"));
 			return "home";
+		}
 		else
 			return "login";
 

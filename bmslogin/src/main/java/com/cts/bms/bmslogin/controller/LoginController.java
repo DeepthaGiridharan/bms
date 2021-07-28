@@ -26,7 +26,7 @@ public class LoginController {
 	private LoginService loginService;
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody UserLoginDetails userLoginDetails) {
+	public ResponseEntity<String> login(@RequestBody UserLoginDetails userLoginDetails) {
 		try {System.out.println(userLoginDetails.getUsername());
 			final UserDetails userDetails = loginService.loadUserByUsername(userLoginDetails.getUsername());
 			if (userDetails == null)
@@ -34,7 +34,7 @@ public class LoginController {
 
 			if (userDetails.getPassword().equals(userLoginDetails.getPassword())) {
 				String generatedToken = jwtUtil.generateToken(userDetails);
-
+				System.out.println("token from login controller "+generatedToken);
 				return new ResponseEntity<>(generatedToken, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);
@@ -47,7 +47,7 @@ public class LoginController {
 	}
 
 	@GetMapping("/validate")
-	public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
 		try {
 			if (token == null) {
 

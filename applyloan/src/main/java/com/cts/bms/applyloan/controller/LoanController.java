@@ -30,9 +30,9 @@ public class LoanController {
 	@Autowired
 	private LoanDao loanService;
 	@GetMapping("/get_loans")
-	public List<Loan> getAllLoans(@RequestParam Integer accountId) {
+	public void getAllLoans(@RequestParam Integer accountId) {
 		LOGGER.info("Loans of accountId:"+accountId);
-		return loanService.getAllLoansByAccountId(accountId);
+		loanService.getAllLoansByAccountId(accountId);
 	}
 	
 	@GetMapping("/get_account_loans")
