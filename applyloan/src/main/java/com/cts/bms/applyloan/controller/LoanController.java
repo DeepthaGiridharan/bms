@@ -47,14 +47,15 @@ public class LoanController {
 		return new ResponseEntity<List<Loan>>(loanService.getAllLoansByAccountId(accountId),HttpStatus.OK);
 	}
 	@PostMapping("/save_loan_details")
-	public ResponseEntity<List<Loan>> saveLoanDetails(@RequestHeader("Authorization") String token,@RequestBody Loan loanDetails) {
+	public ResponseEntity<Void> saveLoanDetails(@RequestHeader("Authorization") String token,@RequestBody Loan loanDetails) {
 		if (!loanService.validateToken(token)) {
 			LOGGER.info("Unauthorized");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		
 		LOGGER.info("Loan details saving");
-		return new ResponseEntity<List<Loan>>(loanService.saveLoanDetails(loanDetails),HttpStatus.OK);
+		loanService.saveLoanDetails(loanDetails);
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 		
 

@@ -5,10 +5,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.cts.bms.applyloan.ApplyloanApplication;
+import com.cts.bms.applyloan.config.ApplyLoanProducer;
+import com.cts.bms.applyloan.config.RetrieveLoanProducer;
 import com.cts.bms.applyloan.model.Loan;
 import com.cts.bms.applyloan.repository.LoanRepository;
 import com.cts.bms.applyloan.restclient.LoginClient;
@@ -25,22 +28,49 @@ public class LoanDaoImpl implements LoanDao {
 	@Autowired
 	LoginClient loginClient;
 	
+	@Autowired
+	private ApplyLoanProducer applyLoanProducer;
+
+	@Autowired
+	private RetrieveLoanProducer retrieveLoanProducer;
+
 	
-	@Override
-	public List<Loan> getAllLoans() {
-		LOGGER.info("Displaying all loans");
-		return loanRepository.findAll();
-	}
+	@Value("${spring.kafka.topic.applyLoanMessage}")
+	String APPLY_LOAN_MESSAGE_TOPIC;
+
+	@Value("${spring.kafka.topic.failedLoanMessage}")
+	String FAILED_LOAN_MESSAGE_TOPIC;
+
+	@Value("${spring.kafka.topic.retrieveLoan}")
+	String RETRIEVE_LOAN_TOPIC;
+
+	@Value("${spring.kafka.topic.failedRetrieveLoan}")
+	String FAILED_RETRIEVE_LOAN_TOPIC;
+
 
 	@Override
 	public List<Loan> getAllLoansByAccountId(Integer accountId) {
+		try {
 		LOGGER.info("Displaying loans of accountId:"+accountId);
-		return loanRepository.getAllLoansByAccountId(accountId);
+		List<Loan> loanList=loanRepository.getAllLoansByAccountId(accountId);
+		retrieveLoanProducer.send(RETRIEVE_LOAN_TOPIC, loanList);
+		return loanList;
+		}
+		catch (Exception e) {
+			
+			applyLoanProducer.send(FAILED_RETRIEVE_LOAN_TOPIC, null);
+			LOGGER.error("Exception");
+			return null;
+		}
+		
 	}
 
 	@Override
-	public List<Loan> saveLoanDetails(Loan loanDetails) {
+	public void saveLoanDetails(Loan loanDetails) {
+		
 		Loan saveLoan=new Loan();
+		String message;
+		try {
 		if(loanDetails.getLoanType().equalsIgnoreCase("Personal")) {
 			 saveLoan= Loan.builder()
 					.accountId(loanDetails.getAccountId())
@@ -77,8 +107,17 @@ public class LoanDaoImpl implements LoanDao {
 			
 		}
 		LOGGER.info("Saving loan details");
+		message= "Loan Applied Successfully";
+		applyLoanProducer.send(APPLY_LOAN_MESSAGE_TOPIC, message);
 		loanRepository.save(saveLoan);
-		return loanRepository.getAllLoansByAccountId(loanDetails.getAccountId());
+		
+		}
+		catch (Exception e) {
+			message = "Process Failed. Please try again.";
+			applyLoanProducer.send(FAILED_LOAN_MESSAGE_TOPIC, message);
+			LOGGER.error("Exception");
+			
+		}
 	}
 
 	@Override

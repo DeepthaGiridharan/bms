@@ -14,9 +14,9 @@ public class CustomerConsumer {
 
 	private CountDownLatch latch = new CountDownLatch(1);
 
-	@KafkaListener(id = "${spring.kafka.customerMessageConsumer.groupId}", topics = {
+	@KafkaListener(id = "${spring.kafka.customerConsumer.groupId}", topics = {
 			"${spring.kafka.topic.registerCustomerMessage}", "${spring.kafka.topic.updateCustomerMessage}",
-			"${spring.kafka.topic.failedCustomerMessage}" }, containerFactory = "customerMessageConsumerKafkaListenerContainerFactory")
+			"${spring.kafka.topic.failedCustomerMessage}" }, containerFactory = "customerConsumerKafkaListenerContainerFactory")
 	public void receive(String payload) {
 		bmsSystemService.saveMessage(payload);
 		latch.countDown();

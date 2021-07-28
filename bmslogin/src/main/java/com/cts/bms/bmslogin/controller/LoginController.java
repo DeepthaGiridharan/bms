@@ -27,7 +27,7 @@ public class LoginController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody UserLoginDetails userLoginDetails) {
-		try {
+		try {System.out.println(userLoginDetails.getUsername());
 			final UserDetails userDetails = loginService.loadUserByUsername(userLoginDetails.getUsername());
 			if (userDetails == null)
 				return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);

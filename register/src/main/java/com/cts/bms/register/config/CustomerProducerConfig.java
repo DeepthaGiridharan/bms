@@ -1,4 +1,4 @@
-package com.cts.bms.bmssystem.kafkaconfig;
+package com.cts.bms.register.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,31 +12,31 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-
-import com.cts.bms.bmssystem.model.Customer;
 import org.apache.kafka.common.serialization.StringSerializer;
+
 @Configuration
 @EnableKafka
 public class CustomerProducerConfig {
-	@Value("${spring.kafka.bootstrapServers}")
+	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
-	
+
 	@Bean
 	public Map<String, Object> customerProducerConfigs() {
-
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
 		return props;
 	}
+
 	@Bean
-	public ProducerFactory<String, Customer> customerProducerFactory() {
+	public ProducerFactory<String, String> customerProducerFactory() {
 		return new DefaultKafkaProducerFactory<>(customerProducerConfigs());
 	}
 
 	@Bean("customerProducerKafkaTemplate")
-	public KafkaTemplate<String, Customer> customerProducerKafkaTemplate() {
+	public KafkaTemplate<String, String> customerProducerKafkaTemplate() {
 		return new KafkaTemplate<>(customerProducerFactory());
 	}
 
@@ -44,4 +44,5 @@ public class CustomerProducerConfig {
 	public CustomerProducer customerProducer() {
 		return new CustomerProducer();
 	}
+
 }

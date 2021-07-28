@@ -13,7 +13,7 @@ public interface CustomerDao {
 	
 	void registerCustomer(Customer customer);
 
-	void updateCustomer(Integer accountId,Customer updateValue);
+	void updateCustomer(Customer updateValue);
 	
 	boolean validateToken(String token);
 	

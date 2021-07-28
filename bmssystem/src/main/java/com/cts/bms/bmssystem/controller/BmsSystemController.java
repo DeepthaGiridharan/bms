@@ -20,7 +20,7 @@ import com.cts.bms.bmssystem.model.UserLoginDetails;
 import com.cts.bms.bmssystem.service.BmsSystemService;
 
 @Controller
-@RequestMapping("/bmssytem")
+@RequestMapping("/bmssystem")
 public class BmsSystemController {
 	@Autowired
 	BmsSystemService bmsSystemService;
@@ -39,39 +39,40 @@ public class BmsSystemController {
 
 	@Value("${spring.kafka.topic.validateToken}")
 	String VALIDATE_TOKEN_TOPIC;
-	@PostMapping("/register")
+	@PostMapping("/save_customer_details")
 	public String register(@RequestBody Customer customer, ModelMap model) {
 
 		bmsSystemService.registerCustomer(REGISTER_CUSTOMER_TOPIC, customer);
 		model.addAttribute("registrationMessage",
-				"Details Registered");
+				bmsSystemService.getMessage());
 		return "registered-details";
 	}
-	@PostMapping("/update")
+	@PostMapping("/update_customer_details")
 	public String update(@RequestBody Customer customer, HttpSession session, ModelMap model) {
+		System.out.println((String) session.getAttribute("TOKEN"));
 		if ((session == null) || (!bmsSystemService.validateToken((String) session.getAttribute("TOKEN"))))
 			return "redirect:/bmssystem/logout";
 		try {
 			bmsSystemService.updateCustomer(UPDATE_CUSTOMER_TOPIC, customer);
-			model.addAttribute("updateMessage", "Details Updated");
+			model.addAttribute("updateMessage", bmsSystemService.getMessage());
 			return "updated";
 		} catch (Exception e) {
 			return "error";
 		}
 	}
-	@PostMapping("/apply")
+	@PostMapping("/save_loan_details")
 	public String apply(@RequestBody Loan loan, HttpSession session, ModelMap model) {
 		if ((session == null) || (!bmsSystemService.validateToken((String) session.getAttribute("TOKEN"))))
 			return "redirect:/bmssystem/logout";
 		try {
 			bmsSystemService.applyLoan(APPLY_LOAN_TOPIC, loan);
-			model.addAttribute("applyLoanMessage","Loan Applied");
+			model.addAttribute("applyLoanMessage",bmsSystemService.getMessage());
 			return "loan-applied";
 		} catch (Exception e) {
 			return "error";
 		}
 	}
-	@GetMapping("/retrieve")
+	@GetMapping("/get_account_loans")
 	public String retrieve(@RequestParam Integer accountNumber, HttpSession session, ModelMap model) {
 		if ((session == null) || (!bmsSystemService.validateToken((String) session.getAttribute("TOKEN"))))
 			return "redirect:/bmssystem/logout";
@@ -80,7 +81,7 @@ public class BmsSystemController {
 		model.addAttribute("loanHistory", bmsSystemService.returnLoans());
 		return "loan-history";
 	}
-	@GetMapping("/getLoans")
+	@GetMapping("/get_loans")
 	public List<Loan> getLoans() {
 		return bmsSystemService.returnLoans();
 

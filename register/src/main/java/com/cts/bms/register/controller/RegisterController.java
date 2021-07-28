@@ -47,7 +47,7 @@ public ResponseEntity<Customer> getCustomerByAccountId(@RequestHeader("Authoriza
 		return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
 	}
 	
-	LOGGER.info("Contoller to get all customer by account id");	
+	LOGGER.info("Contoller to get customer by account id");	
 	return new ResponseEntity<Customer>( registerService.getCustomerByAccountId(accountId),HttpStatus.OK);
 }
 
@@ -60,13 +60,13 @@ public ResponseEntity<Void> registerCustomer(@RequestBody Customer customer) {
 	
 }
 @PostMapping("/update_customer_details")
-public ResponseEntity<Void> updateCustomer(@RequestHeader("Authorization") String token,@RequestBody  Customer customer,@RequestParam Integer accountId) {
+public ResponseEntity<Void> updateCustomer(@RequestHeader("Authorization") String token,@RequestBody  Customer customer) {
 	//LOGGER.info(customer.getAccountType());
 	if (! registerService.validateToken(token)) {
 		LOGGER.info("Unauthorized");
 		return new ResponseEntity<>( HttpStatus.FORBIDDEN);
 	}
-	 registerService.updateCustomer(accountId,customer);
+	 registerService.updateCustomer(customer);
 	LOGGER.info("Updated customer details");	
 	return new ResponseEntity<Void>(HttpStatus.OK);	
 	

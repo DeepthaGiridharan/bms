@@ -3,13 +3,17 @@ package com.cts.bms.register.service;
 import java.util.List;
 
 import com.cts.bms.register.RegisterApplication;
+import com.cts.bms.register.config.CustomerProducer;
+import com.cts.bms.register.config.UserLoginProducer;
 import com.cts.bms.register.model.Customer;
+import com.cts.bms.register.model.UserLoginDetails;
 import com.cts.bms.register.repository.CustomerRepository;
 import com.cts.bms.register.restclient.LoginClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +27,23 @@ public class CustomerDaoImpl implements CustomerDao {
 	@Autowired
 	LoginClient loginClient;
 	
+	@Autowired
+	private CustomerProducer customerProducer;
+	@Autowired
+	private UserLoginProducer userLoginProducer;
+	@Value("${spring.kafka.topic.registerCustomer}")
+	private String REGISTER_CUSTOMER_TOPIC;
+	@Value("${spring.kafka.topic.registerCustomerMessage}")
+	private String REGISTER_CUSTOMER_MESSAGE_TOPIC;
+	@Value("${spring.kafka.topic.updateCustomer}")
+	private String UPDATE_CUSTOMER_TOPIC;
+	@Value("${spring.kafka.topic.updateCustomerMessage}")
+	private String UPDATE_CUSTOMER_MESSAGE_TOPIC;
+	@Value("${spring.kafka.topic.failedCustomerMessage}")
+	private String FAILED_CUSTOMER_MESSAGE_TOPIC;
+	@Value("${spring.kafka.topic.userLogin}")
+	private String USER_LOGIN_TOPIC;
+	
 
 	@Override
 	public List<Customer> getAllRegisteredCustomers() {
@@ -32,38 +53,53 @@ public class CustomerDaoImpl implements CustomerDao {
 
 	@Override
 	public Customer getCustomerByAccountId(Integer accountId) {
+		try {
 		  LOGGER.info("Displaying customer by account Id");
 		return customerRepository.getByAccountId(accountId);
+		}
+		catch (Exception e) {
+			LOGGER.error("Exception");
+			return null;
+		}
+		
 	}
 
 	@Override
 	public void registerCustomer(Customer customer) {
+		 String message;
+		try {
 		 LOGGER.info("Saving customer details");
-		 //LOGGER.info(customer.getUserName());
+		
 		customerRepository.save(customer);
+		UserLoginDetails userLoginDetials = new UserLoginDetails (customer.getUserName(), customer.getPassword(), null);
+		userLoginProducer.send(USER_LOGIN_TOPIC, userLoginDetials);
+		message="Registered Successfully";
+		customerProducer.send(REGISTER_CUSTOMER_MESSAGE_TOPIC, message);
+		}
+		catch (Exception e) {
+			message = "Process Failed. Please try again.";
+			customerProducer.send(FAILED_CUSTOMER_MESSAGE_TOPIC, message);
+			LOGGER.error("Exception");
+		}
+		
 	}
 
 	@Override
-	public void updateCustomer(Integer accountId,Customer updatedValue) {
-		Customer customer= getCustomerByAccountId(accountId);
-		customer.setAccountType(updatedValue.getAccountType());
-		customer.setAddress(updatedValue.getAddress());
-		customer.setCitizenship(updatedValue.getCitizenship());
-		customer.setContactNo(updatedValue.getContactNo());
-		customer.setCountry(updatedValue.getCountry());
-		customer.setDob(updatedValue.getDob());
-		customer.setEmail(updatedValue.getEmail());
-		customer.setGender(updatedValue.getGender());
-		customer.setInitialDeposit(updatedValue.getInitialDeposit());
-		customer.setMaritalStatus(updatedValue.getMaritalStatus());
-		customer.setName(updatedValue.getName());
-		customer.setPanCardNo(updatedValue.getPanCardNo());
-		customer.setPassword(updatedValue.getPassword());
-		customer.setRegDate(updatedValue.getRegDate());
-		customer.setState(updatedValue.getState());
-		customer.setUserName(updatedValue.getUserName());
-		customerRepository.save(customer);
+	public void updateCustomer(Customer updatedValue) {
+		 String message;
+				
 		
+				try {
+					LOGGER.info("Updating customer details");
+					customerRepository.save(updatedValue);
+					message = "Updated Successfully";
+					customerProducer.send(UPDATE_CUSTOMER_MESSAGE_TOPIC, message);
+				}
+				catch (Exception e) {
+					message = "Process Failed. Please try again.";
+					customerProducer.send(FAILED_CUSTOMER_MESSAGE_TOPIC, message);
+					LOGGER.error("Exception");
+				}
 		
 		
 		

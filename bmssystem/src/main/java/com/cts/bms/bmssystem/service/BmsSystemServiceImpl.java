@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 
 import com.cts.bms.bmssystem.kafkaconfig.ApplyLoanProducer;
@@ -20,7 +21,7 @@ import com.cts.bms.bmssystem.model.UserLoginDetails;
 import com.cts.bms.bmssystem.restclient.LoanClient;
 import com.cts.bms.bmssystem.restclient.LoginClient;
 
-
+@Component
 public class BmsSystemServiceImpl implements BmsSystemService {
 	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(BmsSystemServiceImpl.class);
 	@Autowired
