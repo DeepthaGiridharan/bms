@@ -48,24 +48,20 @@ public class LoginController {
 
 	@GetMapping("/validate")
 	public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
-		try {
-			if (token == null) {
-
-				return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);
+		LOGGER.info("Start");
+		if (token.length() < 10) {
+			LOGGER.info("End - Token less than substring index - Unauthorized");
+			return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);
+		} else {
+			String token1 = token.substring(7);
+			if (jwtUtil.validateToken(token1)) {
+				LOGGER.info("End - Success");
+				return new ResponseEntity<>("Accessible", HttpStatus.OK);
 			} else {
-				String token1 = token.substring(7);
-				if (jwtUtil.validateToken(token1)) {
+				LOGGER.info("End - Unauthorized");
+				return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);
 
-					return new ResponseEntity<>("Accessible", HttpStatus.OK);
-				} else {
-					return new ResponseEntity<>("Not Accessible", HttpStatus.FORBIDDEN);
-
-				}
 			}
-		} catch (Exception e) {
-
-			return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
-
 		}
 	}
 }

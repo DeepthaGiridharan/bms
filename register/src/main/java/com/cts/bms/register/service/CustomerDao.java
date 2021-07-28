@@ -7,13 +7,13 @@ import com.cts.bms.register.model.Customer;
 
 public interface CustomerDao {
 
-	List<Customer> getAllRegisteredCustomers();
+	//List<Customer> getAllRegisteredCustomers();
 	
 	Customer getCustomerByAccountId(Integer accountId);
 	
-	void registerCustomer(Customer customer);
+	boolean registerCustomer(Customer customer);
 
-	void updateCustomer(Customer updateValue);
+	boolean updateCustomer(Customer updateValue);
 	
 	boolean validateToken(String token);
 	

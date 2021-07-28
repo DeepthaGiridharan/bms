@@ -45,11 +45,11 @@ public class CustomerDaoImpl implements CustomerDao {
 	private String USER_LOGIN_TOPIC;
 	
 
-	@Override
+	/*@Override
 	public List<Customer> getAllRegisteredCustomers() {
         LOGGER.info("Displaying all registered customers");
 		return customerRepository.findAll();
-	}
+	}*/
 
 	@Override
 	public Customer getCustomerByAccountId(Integer accountId) {
@@ -65,7 +65,7 @@ public class CustomerDaoImpl implements CustomerDao {
 	}
 
 	@Override
-	public void registerCustomer(Customer customer) {
+	public boolean registerCustomer(Customer customer) {
 		 String message;
 		try {
 		 LOGGER.info("Saving customer details");
@@ -75,17 +75,19 @@ public class CustomerDaoImpl implements CustomerDao {
 		userLoginProducer.send(USER_LOGIN_TOPIC, userLoginDetials);
 		message="Registered Successfully";
 		customerProducer.send(REGISTER_CUSTOMER_MESSAGE_TOPIC, message);
+		return true;
 		}
 		catch (Exception e) {
 			message = "Process Failed. Please try again.";
 			customerProducer.send(FAILED_CUSTOMER_MESSAGE_TOPIC, message);
 			LOGGER.error("Exception");
+			return false;
 		}
 		
 	}
 
 	@Override
-	public void updateCustomer(Customer updatedValue) {
+	public boolean updateCustomer(Customer updatedValue) {
 		 String message;
 				
 		
@@ -94,11 +96,13 @@ public class CustomerDaoImpl implements CustomerDao {
 					customerRepository.save(updatedValue);
 					message = "Updated Successfully";
 					customerProducer.send(UPDATE_CUSTOMER_MESSAGE_TOPIC, message);
+					return true;
 				}
 				catch (Exception e) {
 					message = "Process Failed. Please try again.";
 					customerProducer.send(FAILED_CUSTOMER_MESSAGE_TOPIC, message);
 					LOGGER.error("Exception");
+					return false;
 				}
 		
 		

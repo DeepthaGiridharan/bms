@@ -52,23 +52,23 @@ public ResponseEntity<Customer> getCustomerByAccountId(@RequestHeader("Authoriza
 }
 
 @PostMapping("/save_customer_details")
-public ResponseEntity<Void> registerCustomer(@RequestBody Customer customer) {
+public ResponseEntity<Boolean> registerCustomer(@RequestBody Customer customer) {
 	//LOGGER.info(customer.getAccountType());
-	 registerService.registerCustomer(customer);
+	
 	LOGGER.info("Saved customer details");
-	return new ResponseEntity<Void>(HttpStatus.OK);	
+	return new ResponseEntity<Boolean>( registerService.registerCustomer(customer),HttpStatus.OK);	
 	
 }
 @PostMapping("/update_customer_details")
-public ResponseEntity<Void> updateCustomer(@RequestHeader("Authorization") String token,@RequestBody  Customer customer) {
+public ResponseEntity<Boolean> updateCustomer(@RequestHeader("Authorization") String token,@RequestBody  Customer customer) {
 	//LOGGER.info(customer.getAccountType());
 	if (! registerService.validateToken(token)) {
 		LOGGER.info("Unauthorized");
-		return new ResponseEntity<>( HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(false,HttpStatus.FORBIDDEN);
 	}
-	 registerService.updateCustomer(customer);
+	 
 	LOGGER.info("Updated customer details");	
-	return new ResponseEntity<Void>(HttpStatus.OK);	
+	return new ResponseEntity<Boolean>(registerService.updateCustomer(customer),HttpStatus.OK);	
 	
 }
 

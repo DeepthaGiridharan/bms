@@ -28,10 +28,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 @Entity
 @Table(name = "user_registration")
 public class Customer {
+	
 	@NotNull
 	@NumberFormat(style = Style.NUMBER)
 	@Id
@@ -57,6 +58,7 @@ public class Customer {
 	@NotNull
 	@Column(name="ADDRESS")
 	private String address;
+	
 	@NotNull
 	@Column(name="CITIZENSHIP")
 	private String citizenship;
@@ -99,5 +101,6 @@ public class Customer {
 	@NotNull
 	@Column(name="PAN_CARD_NO")
 	private String panCardNo;
+	
 
 }
