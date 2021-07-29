@@ -1,5 +1,5 @@
 package com.cts.bms.applyloan.controller;
-
+import springfox.documentation.annotations.ApiIgnore;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -29,6 +29,7 @@ public class LoanController {
 
 	@Autowired
 	private LoanDao loanService;
+	@ApiIgnore
 	@GetMapping("/get_loans")
 	public void getAllLoans(@RequestParam Integer accountId) {
 		LOGGER.info("Loans of accountId:"+accountId);
